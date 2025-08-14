@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مهمة Laravel RESTful API</title>
+    <meta name="description" content="تنفيذ شامل لواجهة برمجة تطبيقات RESTful باستخدام Laravel مع وظائف CRUD كاملة">
+    <meta name="keywords" content="Laravel, API, RESTful, CRUD, PHP, تطوير الويب">
+    <meta name="author" content="مطور Laravel">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-domain.com/">
+    <meta property="og:title" content="مهمة Laravel RESTful API">
+    <meta property="og:description" content="تنفيذ شامل لواجهة برمجة تطبيقات RESTful باستخدام Laravel">
+    <meta property="og:image" content="https://your-domain.com/images/laravel-api-preview.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://your-domain.com/">
+    <meta property="twitter:title" content="مهمة Laravel RESTful API">
+    <meta property="twitter:description" content="تنفيذ شامل لواجهة برمجة تطبيقات RESTful باستخدام Laravel">
+    <meta property="twitter:image" content="https://your-domain.com/images/laravel-api-preview.jpg">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --bg-light: #f7fafc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow-light: rgba(102, 126, 234, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Cairo', 'Arial', sans-serif;
+            line-height: 1.8;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            text-align: right;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+        }
+
+        header .subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-weight: 300;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Image Section */
+        .hero-image {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .hero-image .placeholder {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            margin: 0 auto 1rem;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-image h3 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .hero-image p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 40px var(--shadow-medium);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            padding: clamp(1.5rem, 4vw, 2.5rem);
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section:hover {
+            background-color: var(--bg-light);
+            transform: translateY(-2px);
+        }
+
+        .section h2 {
+            color: var(--text-primary);
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .section h2 i {
+            color: var(--primary-color);
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+        }
+
+        .section p {
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            line-height: 1.8;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(1rem, 3vw, 2rem);
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #edf2f7 100%);
+            padding: clamp(1.5rem, 4vw, 2rem);
+            border-radius: var(--border-radius);
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px var(--shadow-light);
+        }
+
+        .feature-card i {
+            font-size: clamp(2.5rem, 6vw, 3rem);
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-size: clamp(1.2rem, 3vw, 1.4rem);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            line-height: 1.6;
+        }
+
+        /* Endpoint Lists */
+        .endpoint-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .endpoint-list li {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #edf2f7 100%);
+            margin: 0.75rem 0;
+            padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
+            border-radius: 12px;
+            border-right: 4px solid var(--primary-color);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: clamp(0.5rem, 2vw, 1rem);
+            flex-wrap: wrap;
+        }
+
+        .endpoint-list li:hover {
+            transform: translateX(-8px);
+            box-shadow: 0 4px 12px var(--shadow-light);
+        }
+
+        .endpoint-list li i {
+            color: var(--primary-color);
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            min-width: 20px;
+        }
+
+        .endpoint-method {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .endpoint-url {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            word-break: break-all;
+        }
+
+        .endpoint-description {
+            color: var(--text-secondary);
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            margin-right: auto;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: #e2e8f0;
+            padding: clamp(1rem, 3vw, 1.5rem);
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+            line-height: 1.6;
+            position: relative;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            text-align: left;
+        }
+
+        .code-block::before {
+            content: 'مثال على الكود';
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Highlight Boxes */
+        .highlight-box {
+            background: linear-gradient(135deg, #fef5e7 0%, #fed7aa 100%);
+            border: 1px solid #f6ad55;
+            border-radius: 12px;
+            padding: clamp(1rem, 3vw, 1.5rem);
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .highlight-box::before {
+            content: '💡';
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+        }
+
+        .highlight-box h3 {
+            color: #c05621;
+            margin-bottom: 1rem;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+        }
+
+        .highlight-box p {
+            color: #744210;
+            margin-bottom: 0;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+        }
+
+        /* Floating Action Button */
+        .floating-action {
+            position: fixed;
+            bottom: clamp(1rem, 4vw, 2rem);
+            left: clamp(1rem, 4vw, 2rem);
+            background: var(--primary-color);
+            color: white;
+            width: clamp(50px, 12vw, 60px);
+            height: clamp(50px, 12vw, 60px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            transition: var(--transition);
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .floating-action:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            color: white;
+            opacity: 0.8;
+        }
+
+        .footer p {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+        }
+
+        /* Navigation Menu for Mobile */
+        .nav-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .nav-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .nav-menu.active {
+            display: block;
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            margin-top: 4rem;
+        }
+
+        .nav-menu li {
+            margin: 1rem 0;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: block;
+            padding: 1rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-close {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .endpoint-list li {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .endpoint-description {
+                margin-right: 0;
+                margin-top: 0.5rem;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .floating-action {
+                bottom: 1rem;
+                left: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 1.5rem 1rem;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+                min-height: 180px;
+            }
+
+            .code-block {
+                padding: 1rem;
+                font-size: 0.8rem;
+            }
+
+            .highlight-box {
+                padding: 1rem;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                padding: 2rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            .main-content {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+
+            .floating-action,
+            .nav-toggle {
+                display: none;
+            }
+
+            .section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Accessibility Improvements */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles for keyboard navigation */
+        .floating-action:focus,
+        .nav-toggle:focus {
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --primary-color: #000080;
+                --text-primary: #000000;
+                --text-secondary: #333333;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Navigation Toggle -->
+    <button class="nav-toggle" aria-label="تبديل قائمة التنقل">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+        <button class="nav-close" aria-label="إغلاق قائمة التنقل">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul>
+            <li><a href="#objective">الهدف</a></li>
+            <li><a href="#overview">نظرة عامة</a></li>
+            <li><a href="#users">نقاط نهاية المستخدم</a></li>
+            <li><a href="#categories">نقاط نهاية الفئات</a></li>
+            <li><a href="#posts">نقاط نهاية المنشورات</a></li>
+            <li><a href="#relationships">العلاقات</a></li>
+        </ul>
+    </div>
+
+    <header>
+        <h1><i class="fas fa-code"></i> Laravel RESTful API</h1>
+        <p class="subtitle">تنفيذ شامل لوظائف CRUD مع هندسة حديثة</p>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="section" id="objective">
+                <h2><i class="fas fa-bullseye"></i> الهدف</h2>
+                <p>إنشاء واجهة برمجة تطبيقات RESTful قوية باستخدام Laravel تنفذ وظائف CRUD شاملة لثلاثة نماذج مترابطة،
+                    مما يوضح أفضل ممارسات تطوير الويب الحديثة وإدارة العلاقات المناسبة.</p>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-users"></i>
+                        <h3>إدارة المستخدمين</h3>
+                        <p>عمليات CRUD كاملة للمستخدمين مع المصادقة والتحقق</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-tags"></i>
+                        <h3>نظام الفئات</h3>
+                        <p>إدارة مرنة للفئات مع قيود فريدة</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>إدارة المنشورات</h3>
+                        <p>معالجة متقدمة للمنشورات مع علاقات ديناميكية للفئات</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" id="overview">
+                <h2><i class="fas fa-info-circle"></i> نظرة عامة على المهمة</h2>
+                <p>استفد من الأدوات المدمجة القوية في Laravel والهيكل الأنيق لتنفيذ واجهة برمجة تطبيقات جاهزة للإنتاج.
+                    ركز على التحقق المناسب من المدخلات والمصادقة الآمنة وإدارة العلاقات الفعالة باستخدام قدرات ORM
+                    المتطورة في Laravel.</p>
+            </div>
+
+            <div class="section" id="users">
+                <h2><i class="fas fa-user-cog"></i> نقاط نهاية نموذج المستخدم</h2>
+                <p>إدارة شاملة للمستخدمين مع تدابير تحقق وأمان قوية:</p>
+                <ul class="endpoint-list">
+                    <li>
+                        <i class="fas fa-download"></i>
+                        <span class="endpoint-method">GET</span>
+                        <span class="endpoint-url">/api/users</span>
+                        <span class="endpoint-description">استرجاع جميع المستخدمين مع ترقيم الصفحات</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-plus"></i>
+                        <span class="endpoint-method">POST</span>
+                        <span class="endpoint-url">/api/users</span>
+                        <span class="endpoint-description">إنشاء مستخدم جديد مع التحقق</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-edit"></i>
+                        <span class="endpoint-method">PUT</span>
+                        <span class="endpoint-url">/api/users/{id}</span>
+                        <span class="endpoint-description">تحديث معلومات المستخدم الموجودة</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-trash"></i>
+                        <span class="endpoint-method">DELETE</span>
+                        <span class="endpoint-url">/api/users/{id}</span>
+                        <span class="endpoint-description">إزالة المستخدم مع معالجة التتابع</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" id="categories">
+                <h2><i class="fas fa-tags"></i> نقاط نهاية نموذج الفئة</h2>
+                <p>نظام إدارة فئات فعال مع قيود مناسبة:</p>
+                <ul class="endpoint-list">
+                    <li>
+                        <i class="fas fa-download"></i>
+                        <span class="endpoint-method">GET</span>
+                        <span class="endpoint-url">/api/categories</span>
+                        <span class="endpoint-description">استرجاع جميع الفئات</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-plus"></i>
+                        <span class="endpoint-method">POST</span>
+                        <span class="endpoint-url">/api/categories</span>
+                        <span class="endpoint-description">إنشاء فئة جديدة</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-edit"></i>
+                        <span class="endpoint-method">PUT</span>
+                        <span class="endpoint-url">/api/categories/{id}</span>
+                        <span class="endpoint-description">تحديث تفاصيل الفئة</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-trash"></i>
+                        <span class="endpoint-method">DELETE</span>
+                        <span class="endpoint-url">/api/categories/{id}</span>
+                        <span class="endpoint-description">حذف الفئة بأمان</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" id="posts">
+                <h2><i class="fas fa-file-alt"></i> نقاط نهاية نموذج المنشور</h2>
+                <p>إدارة متقدمة للمنشورات مع علاقات ديناميكية للفئات:</p>
+                <ul class="endpoint-list">
+                    <li>
+                        <i class="fas fa-download"></i>
+                        <span class="endpoint-method">GET</span>
+                        <span class="endpoint-url">/api/posts</span>
+                        <span class="endpoint-description">استرجاع المنشورات مع الفئات</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-plus"></i>
+                        <span class="endpoint-method">POST</span>
+                        <span class="endpoint-url">/api/posts</span>
+                        <span class="endpoint-description">إنشاء منشور مع الفئات</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-edit"></i>
+                        <span class="endpoint-method">PUT</span>
+                        <span class="endpoint-url">/api/posts/{id}</span>
+                        <span class="endpoint-description">تحديث المنشور والفئات</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-trash"></i>
+                        <span class="endpoint-method">DELETE</span>
+                        <span class="endpoint-url">/api/posts/{id}</span>
+                        <span class="endpoint-description">إزالة المنشور تماماً</span>
+                    </li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h3>إدارة العلاقات</h3>
+                    <p>استخدم طريقة <code>sync</code> في Laravel لإدارة الفئات الفعالة من نوع many-to-many بدون تكرار.
+                    </p>
+                </div>
+            </div>
+
+            <div class="section" id="relationships">
+                <h2><i class="fas fa-link"></i> تنفيذ العلاقة من نوع Many-to-Many</h2>
+                <p>أتقن فن إدارة العلاقات المعقدة باستخدام دالة <code>sync</code> القوية في Laravel لإدارة الفئات
+                    الديناميكية:</p>
+
+                <div class="code-block">
+                    // مزامنة الفئات الفعالة <br />
+                    $post->categories()->sync([1, 2, 3]); // ربط الفئات 1، 2، و 3
+
+                    <div class="highlight-box">
+                        <h3>الفوائد الرئيسية</h3>
+                        <p>تتعامل دالة <code>sync</code> تلقائياً مع إدارة جدول المحور، وتمنع الإدخالات المكررة، وتحافظ
+                            على سلامة المراجع عبر تطبيقك.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="floating-action" onclick="scrollToTop()" aria-label="التمرير إلى الأعلى">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 مهمة Laravel API | مبني بـ ❤️ وتقنيات ويب حديثة</p>
+        </div>
+
+        <script>
+            // Mobile Navigation Toggle
+            const navToggle = document.querySelector('.nav-toggle');
+            const navMenu = document.querySelector('#navMenu');
+            const navClose = document.querySelector('.nav-close');
+
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.add('active');
+            });
+
+            navClose.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+            });
+
+            // Close menu when clicking on a link
+            document.querySelectorAll('.nav-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                });
+            });
+
+            // Close menu when clicking outside
+            navMenu.addEventListener('click', (e) => {
+                if (e.target === navMenu) {
+                    navMenu.classList.remove('active');
+                }
+            });
+
+            // Scroll to top functionality
+            function scrollToTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'all 0.6s ease';
+                observer.observe(section);
+            });
+
+            // Responsive feature: Hide/show floating action button based on scroll
+            let lastScrollTop = 0;
+            const floatingAction = document.querySelector('.floating-action');
+
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                if (scrollTop > 300) {
+                    floatingAction.style.opacity = '1';
+                    floatingAction.style.transform = 'scale(1)';
+                } else {
+                    floatingAction.style.opacity = '0';
+                    floatingAction.style.transform = 'scale(0.8)';
+                }
+
+                lastScrollTop = scrollTop;
+            });
+
+            // Initialize floating action button state
+            floatingAction.style.opacity = '0';
+            floatingAction.style.transform = 'scale(0.8)';
+
+            // Add keyboard navigation support
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                }
+            });
+
+            // Performance optimization: Debounce scroll events
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            // Apply debouncing to scroll events
+            const debouncedScrollHandler = debounce(() => {
+                // Scroll handling logic here if needed
+            }, 16); // 60fps
+
+            window.addEventListener('scroll', debouncedScrollHandler);
+        </script>
+
+</body>
+
+</html>
