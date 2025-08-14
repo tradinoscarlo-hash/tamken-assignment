@@ -588,11 +588,6 @@
                         <span class="endpoint-description">Remove user with cascade handling</span>
                     </li>
                 </ul>
-
-                <div class="highlight-box">
-                    <h3>Validation Requirements</h3>
-                    <p>Implement comprehensive validation including email format verification, password strength requirements, and unique constraint checking for optimal data integrity.</p>
-                </div>
             </div>
 
             <div class="section" id="categories">
@@ -624,11 +619,6 @@
                         <span class="endpoint-description">Delete category safely</span>
                     </li>
                 </ul>
-
-                <div class="highlight-box">
-                    <h3>Category Attributes</h3>
-                    <p>Categories include <code>name</code> and <code>description</code> fields with unique name validation to prevent duplicates.</p>
-                </div>
             </div>
 
             <div class="section" id="posts">
@@ -674,10 +664,9 @@
                     for dynamic category management:</p>
 
                 <div class="code-block">
-// Efficient category synchronization
-$post->categories()->sync([1, 2, 3]); // Attach categories 1, 2, and 3
-$post->categories()->syncWithoutDetaching([4, 5]); // Add without removing existing
-$post->categories()->detach([1]); // Remove specific categories</div>
+                    // Efficient category synchronization
+                    $post->categories()->sync([1, 2, 3]); // Attach categories 1, 2, and 3
+                </div>
 
                 <div class="highlight-box">
                     <h3>Key Benefits</h3>
@@ -775,7 +764,7 @@ $post->categories()->detach([1]); // Remove specific categories</div>
 
         window.addEventListener('scroll', () => {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
+
             if (scrollTop > 300) {
                 floatingAction.style.opacity = '1';
                 floatingAction.style.transform = 'scale(1)';
@@ -783,7 +772,7 @@ $post->categories()->detach([1]); // Remove specific categories</div>
                 floatingAction.style.opacity = '0';
                 floatingAction.style.transform = 'scale(0.8)';
             }
-            
+
             lastScrollTop = scrollTop;
         });
 
